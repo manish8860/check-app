@@ -1,0 +1,20 @@
+
+  mvn package -DskipTests
+
+  #### Docker Commands
+  ##### Start MySql Container (downloads image if not found)
+
+  docker run  --detach   --name pass-mysql -p 6604:3306 -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=passchecker -e MYSQL_USER=msr_user -e MYSQL_PASSWORD=msr_pass -d mysql
+
+  ##### Interact with Database (link to ec-mysql container) with mysql client
+
+  docker run -it --link pass-mysql:mysql --rm mysql sh -c "exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD""
+
+
+  ##### Build Docker image
+
+  docker build -t explorecali .
+
+  ##### Run Docker container
+
+  docker run --name check-app -p 8080:8080  --link pass-mysql:mysql -v C:\Users\Manmohan_Rawat\Desktop\docker_practice\share\db\migration:/var/migration -e server=pass-mysql -e port=3306 -e user=msr_user -e password=msr_pass -d check-app-prod
